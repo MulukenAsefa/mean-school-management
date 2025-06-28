@@ -1,41 +1,43 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, UrlTree } from '@angular/router';
+import { CanActivate, Router, UrlTree, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
-  canActivate(route: ActivatedRouteSnapshot): boolean | UrlTree {
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree {
     const currentUser = this.authService.currentUserValue;
 
-    // This is the check for feature routes like '/admin', '/teacher', etc.
-    if (route.routeConfig?.path !== '') {
-      if (currentUser) {
-        // User is logged in, so allow access to the route.
-        // The RoleGuard will then check if they have the right role.
-        return true;
-      }
-      // Not logged in, redirect to login page.
-      return this.router.createUrlTree(['/login']);
-    }
-
-    // This part now only runs for the root path: path: ''
-    // It acts as a redirector.
     if (currentUser) {
-      switch (currentUser.role) {
-        case 'Admin':
-          return this.router.createUrlTree(['/admin']);
-        case 'Teacher':
-          return this.router.createUrlTree(['/teacher']);
-        case 'Student':
-          return this.router.createUrlTree(['/student']);
-        default:
-          return this.router.createUrlTree(['/login']);
+      // --- User IS logged in ---
+
+      // If the user is trying to access the root path ('/'), redirect them to their specific dashboard.
+      // This is the main redirection logic.
+      if (state.url === '/') {
+        switch (currentUser.role) {
+          case 'Admin':
+            return this.router.createUrlTree(['/admin']);
+          case 'Teacher':
+            return this.router.createUrlTree(['/teacher']);
+          case 'Student':
+            return this.router.createUrlTree(['/student']);
+          default:
+            // Fallback for an unknown role, send to login
+            return this.router.createUrlTree(['/login']);
+        }
       }
+      
+      // If the user is already logged in and trying to access any other protected route 
+      // (like /admin/users), allow the navigation to proceed. The RoleGuard will then check permissions.
+      // This is the part that BREAKS THE INFINITE LOOP.
+      return true;
     }
 
-    // No user and at the root, send to login.
+    // --- User IS NOT logged in ---
+    
+    // Redirect any unauthenticated user to the login page.
+    // The login/register pages themselves should not have this guard.
     return this.router.createUrlTree(['/login']);
   }
 }

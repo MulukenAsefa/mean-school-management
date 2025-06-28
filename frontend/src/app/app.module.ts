@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+// BrowserAnimationsModule is NO LONGER needed here
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -15,14 +15,14 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule,
+    // REMOVED BrowserAnimationsModule from here
     HttpClientModule,
     AuthModule,
     SharedModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    provideAnimationsAsync()
+    provideAnimationsAsync() // This is now the single source for animations
   ],
   bootstrap: [AppComponent]
 })
