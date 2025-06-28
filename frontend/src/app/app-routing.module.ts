@@ -3,14 +3,12 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { RoleGuard } from './core/guards/role.guard';
 import { LoginComponent } from './features/auth/login/login.component';
-import { AuthService } from './core/services/auth.service';
-import { map } from 'rxjs/operators';
-import { User } from './core/models/user.model';
-import { RegisterComponent } from './features/auth/register/register.component'; // <-- IMPORT ADDED HERE
+import { RegisterComponent } from './features/auth/register/register.component';
+import { LayoutComponent } from './shared/components/layout/layout.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent }, // <-- ROUTE ADDED HERE
+  { path: 'register', component: RegisterComponent },
   {
     path: 'admin',
     canActivate: [AuthGuard, RoleGuard],
@@ -29,24 +27,14 @@ const routes: Routes = [
     data: { roles: ['Student'] },
     loadChildren: () => import('./features/student/student.module').then(m => m.StudentModule)
   },
+  // --- THIS IS THE MODIFIED ROOT ROUTE ---
   {
     path: '',
     pathMatch: 'full',
-    canActivate: [AuthGuard],
-    resolve: {
-        url: () => inject(AuthService).currentUser.pipe(
-            map((user: User | null) => {
-                switch(user?.role) {
-                    case 'Admin': return '/admin';
-                    case 'Teacher': return '/teacher';
-                    case 'Student': return '/student';
-                    default: return '/login';
-                }
-            })
-        )
-    },
-    component: LoginComponent,
+    canActivate: [AuthGuard], // The guard will now handle all redirection
+    component: LayoutComponent // We can just point to a simple component
   },
+  // --- END OF MODIFICATION ---
   { path: '**', redirectTo: '/login' }
 ];
 
