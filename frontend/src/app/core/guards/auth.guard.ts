@@ -1,49 +1,41 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, UrlTree } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
-  canActivate(): boolean {
+  canActivate(route: ActivatedRouteSnapshot): boolean | UrlTree {
     const currentUser = this.authService.currentUserValue;
 
+    // This is the check for feature routes like '/admin', '/teacher', etc.
+    if (route.routeConfig?.path !== '') {
+      if (currentUser) {
+        // User is logged in, so allow access to the route.
+        // The RoleGuard will then check if they have the right role.
+        return true;
+      }
+      // Not logged in, redirect to login page.
+      return this.router.createUrlTree(['/login']);
+    }
+
+    // This part now only runs for the root path: path: ''
+    // It acts as a redirector.
     if (currentUser) {
-      // User is logged in. Redirect them to their specific dashboard.
-      // This handles the case where a logged-in user visits the root URL ('/')
-      // or refreshes a page they have access to.
       switch (currentUser.role) {
         case 'Admin':
-          // If the user is already on an admin path, let them stay.
-          if (this.router.url.startsWith('/admin')) {
-            return true;
-          }
-          this.router.navigate(['/admin']);
-          return false;
+          return this.router.createUrlTree(['/admin']);
         case 'Teacher':
-          // If the user is already on a teacher path, let them stay.
-          if (this.router.url.startsWith('/teacher')) {
-            return true;
-          }
-          this.router.navigate(['/teacher']);
-          return false;
+          return this.router.createUrlTree(['/teacher']);
         case 'Student':
-          // If the user is already on a student path, let them stay.
-          if (this.router.url.startsWith('/student')) {
-            return true;
-          }
-          this.router.navigate(['/student']);
-          return false;
+          return this.router.createUrlTree(['/student']);
         default:
-          // Fallback for an unknown role
-          this.router.navigate(['/login']);
-          return false;
+          return this.router.createUrlTree(['/login']);
       }
     }
 
-    // User is not logged in, redirect them to the login page.
-    this.router.navigate(['/login']);
-    return false;
+    // No user and at the root, send to login.
+    return this.router.createUrlTree(['/login']);
   }
 }
