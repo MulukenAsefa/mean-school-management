@@ -1,0 +1,28 @@
+<div class="container">
+  <h1>Welcome, Teacher!</h1>
+  <p>Here is a summary of the school system.</p>
+
+  <div class="dashboard-cards">
+    <mat-card class="dashboard-card">
+      <mat-card-header>
+        <div mat-card-avatar><mat-icon>school</mat-icon></div>
+        <mat-card-title>{{ studentCount$ | async }}</mat-card-title>
+        <mat-card-subtitle>Total Students</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+
+    <mat-card class="dashboard-card">
+      <mat-card-header>
+        <div mat-card-avatar><mat-icon>book</mat-icon></div>
+        <mat-card-title>{{ subjectCount$ | async }}</mat-card-title>
+        <mat-card-subtitle>Total Subjects</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+  </div>
+
+  <div class="quick-actions">
+    <h2>Quick Actions</h2>
+    <a mat-raised-button color="primary" routerLink="/teacher/assign-marks">Assign Marks</a>
+    <a mat-raised-button routerLink="/teacher/students">View Student Grades</a>
+  </div>
+</div>

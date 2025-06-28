@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>{{ isEditMode ? 'Edit Subject' : 'Add New Subject' }}</h1>
+<div mat-dialog-content [formGroup]="form">
+  <mat-form-field appearance="fill">
+    <mat-label>Subject Name</mat-label>
+    <input matInput formControlName="name" cdkFocusInitial>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Description</mat-label>
+    <textarea matInput formControlName="description"></textarea>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="onSave()" [disabled]="form.invalid">Save</button>
+</div>

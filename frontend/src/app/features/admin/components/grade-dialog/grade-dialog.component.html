@@ -1,0 +1,22 @@
+<h1 mat-dialog-title>{{ isEditMode ? 'Edit Grade' : 'Add New Grade' }}</h1>
+<div mat-dialog-content [formGroup]="form">
+  <mat-form-field appearance="fill">
+    <mat-label>Grade Name</mat-label>
+    <input matInput formControlName="name" cdkFocusInitial placeholder="e.g. Grade 9A">
+  </mat-form-field>
+  
+  <mat-form-field appearance="fill">
+    <mat-label>Assign Teacher (Optional)</mat-label>
+    <mat-select formControlName="teacherId">
+        <mat-option [value]="null">-- Unassigned --</mat-option>
+        <mat-option *ngFor="let teacher of teachers$ | async" [value]="teacher._id">
+            {{ teacher.name }}
+        </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="onSave()" [disabled]="form.invalid">Save</button>
+</div>

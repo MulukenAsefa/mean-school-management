@@ -1,0 +1,19 @@
+<div class="container">
+  <h1>Welcome, {{ userName }}!</h1>
+  <p>Here is a summary of your academic performance.</p>
+
+  <div class="dashboard-cards">
+    <mat-card class="dashboard-card">
+      <mat-card-header>
+        <div mat-card-avatar><mat-icon>assessment</mat-icon></div>
+        <mat-card-title>{{ averageMark$ | async }}%</mat-card-title>
+        <mat-card-subtitle>Average Mark</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+  </div>
+  
+  <div class="quick-actions">
+    <h2>Quick Actions</h2>
+    <a mat-raised-button color="primary" routerLink="/student/my-marks">View All My Marks</a>
+  </div>
+</div>

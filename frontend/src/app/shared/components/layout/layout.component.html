@@ -1,0 +1,45 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport
+      [attr.role]="'navigation'"
+      [mode]="'side'"
+      opened>
+    <mat-toolbar>Menu</mat-toolbar>
+    <mat-nav-list>
+      <!-- Admin Links -->
+      <ng-container *ngIf="authService.hasRole('Admin')">
+        <a mat-list-item routerLink="/admin" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">Dashboard</a>
+        <a mat-list-item routerLink="/admin/users" routerLinkActive="active-link">Manage Users</a>
+        <a mat-list-item routerLink="/admin/subjects" routerLinkActive="active-link">Manage Subjects</a>
+        <a mat-list-item routerLink="/admin/grades" routerLinkActive="active-link">Manage Grades</a>
+      </ng-container>
+
+      <!-- Teacher Links -->
+      <ng-container *ngIf="authService.hasRole('Teacher')">
+        <a mat-list-item routerLink="/teacher" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">Dashboard</a>
+        <a mat-list-item routerLink="/teacher/assign-marks" routerLinkActive="active-link">Assign Marks</a>
+        <a mat-list-item routerLink="/teacher/view-students" routerLinkActive="active-link">View Students</a>
+        <a mat-list-item routerLink="/teacher/mark-attendance" routerLinkActive="active-link">Mark Attendance</a>
+      </ng-container>
+
+      <!-- Student Links -->
+      <ng-container *ngIf="authService.hasRole('Student')">
+        <a mat-list-item routerLink="/student" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">Dashboard</a>
+        <a mat-list-item routerLink="/student/my-marks" routerLinkActive="active-link">View My Marks</a>
+        <a mat-list-item routerLink="/student/my-attendance" routerLinkActive="active-link">View My Attendance</a>
+      </ng-container>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <span>School Management System</span>
+      <span class="spacer"></span>
+      <span *ngIf="currentUser$ | async as user">Welcome, {{ user.name }}</span>
+      <button mat-icon-button (click)="logout()">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </mat-toolbar>
+    <div class="main-content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
